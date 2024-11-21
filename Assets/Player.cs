@@ -1,39 +1,45 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	int layerMask;
-	public float distance;
-	public float jumpForce = 10f; // 점프 힘을 조절하는 변수
-	public float forwardForce = 5f; // 앞으로 나아가는 힘을 조절하는 변수
-	private Rigidbody rb; // Rigidbody 컴포넌트를 저장할 변수
+	public float jumpForce = 10f;
+	public float forwardForce = 5f;
+	public float _speed = 1;
+	private Rigidbody rb;
+
 
 	void Start()
 	{
-		layerMask = LayerMask.GetMask("Ground");
-		rb = GetComponent<Rigidbody>(); // Rigidbody 컴포넌트를 가져옵니다
-
-		if (rb == null)
-		{
-			Debug.LogError("Rigidbody component is not found!");
-		}
+		rb = GetComponent<Rigidbody>();
 	}
 
 	void Update()
 	{
-		RaycastHit hit;
-		Vector3 rayDirection = Vector3.down;
-
-		if (Physics.Raycast(transform.position, rayDirection, out hit, Mathf.Infinity, layerMask))
-		{
-			distance = Vector3.Distance(transform.position, hit.point);
-
-			Debug.DrawRay(transform.position, rayDirection * distance, Color.red);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Space) && distance < 0.5f) // 스페이스 키를 눌렀을 때 점프
+		if (Input.GetKeyDown(KeyCode.Space) && GameManagers.instance.activate == true)
 		{
 			Jump();
+		}
+
+		if (Input.GetKey(KeyCode.W))
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
+			transform.position += Vector3.forward * Time.deltaTime * _speed;
+		}
+		if (Input.GetKey(KeyCode.S))
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back), 0.2f);
+			transform.position += Vector3.back * Time.deltaTime * _speed;
+		}
+		if (Input.GetKey(KeyCode.A))
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.left), 0.2f);
+			transform.position += Vector3.left * Time.deltaTime * _speed;
+		}
+		if (Input.GetKey(KeyCode.D))
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.right), 0.2f);
+			transform.position += Vector3.right * Time.deltaTime * _speed;
 		}
 	}
 
